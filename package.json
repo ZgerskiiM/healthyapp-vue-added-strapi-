@@ -1,0 +1,33 @@
+{
+  "name": "my-vue-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "apexcharts": "^3.50.0",
+    "axios": "^1.7.7",
+    "chart.js": "^4.4.3",
+    "echarts": "^5.5.1",
+    "pinia": "^2.1.7",
+    "uuidv4": "^6.2.13",
+    "vue": "^3.4.21",
+    "vue-chartjs": "^5.3.1",
+    "vue-echarts": "^6.7.3",
+    "vue-router": "^4.3.3",
+    "vue3-apexcharts": "^1.5.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "sass": "^1.77.4",
+    "scss": "^0.2.4",
+    "vite": "^5.2.0",
+    "vite-plugin-vuetify": "^2.0.3",
+    "vuetify": "^3.6.8"
+  }
+}
