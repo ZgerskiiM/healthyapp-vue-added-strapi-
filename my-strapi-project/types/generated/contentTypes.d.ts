@@ -362,58 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiFoodFood extends Schema.CollectionType {
-  collectionName: 'foods';
-  info: {
-    singularName: 'food';
-    pluralName: 'foods';
-    displayName: 'food';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    food: Attribute.JSON;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::food.food', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<'api::food.food', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
-export interface ApiUser1User1 extends Schema.CollectionType {
-  collectionName: 'users1';
-  info: {
-    singularName: 'user1';
-    pluralName: 'users1';
-    displayName: 'user';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    users: Attribute.JSON;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::user1.user1',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::user1.user1',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -840,6 +788,80 @@ export interface PluginI18NLocale extends Schema.CollectionType {
   };
 }
 
+export interface ApiFoodFood extends Schema.CollectionType {
+  collectionName: 'foods';
+  info: {
+    singularName: 'food';
+    pluralName: 'foods';
+    displayName: 'food';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    food: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::food.food', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::food.food', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiMealMeal extends Schema.CollectionType {
+  collectionName: 'meals';
+  info: {
+    singularName: 'meal';
+    pluralName: 'meals';
+    displayName: 'meal';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    meal1: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::meal.meal', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::meal.meal', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUser1User1 extends Schema.CollectionType {
+  collectionName: 'users1';
+  info: {
+    singularName: 'user1';
+    pluralName: 'users1';
+    displayName: 'user';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    users: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user1.user1',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user1.user1',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -850,8 +872,6 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::food.food': ApiFoodFood;
-      'api::user1.user1': ApiUser1User1;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -860,6 +880,9 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::i18n.locale': PluginI18NLocale;
+      'api::food.food': ApiFoodFood;
+      'api::meal.meal': ApiMealMeal;
+      'api::user1.user1': ApiUser1User1;
     }
   }
 }
