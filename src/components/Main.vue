@@ -2,11 +2,12 @@
 import { ref, reactive, onMounted, computed, watch, onBeforeUnmount } from "vue";
 import Navigation from "/src/components/Navigation.vue";
 import UserData from "/src/components/UserData.vue";
-import MealExpansionPanels from "./ExpansionPanels.vue"
+import MealExpansionPanels from "./ExpansionPanels.vue";
 import AddProductDialog from './AddProductDialog.vue';
 import { useFoodStore } from "/src/stores/ProductStore.js";
 import { useUserStore } from "/src/stores/UserStore.js";
 import { useCaloriesStore } from "/src/stores/DailyNutritionStore.js";
+import axios from 'axios';
 
 const showDatePicker = ref(false);
 const meals = reactive({});
@@ -24,11 +25,10 @@ const currentDateString = computed(() => {
 
 onMounted(async () => {
   checkFirstVisit();
-
   await foodStore.loadFood();
   items.value = foodStore.food;
 
-  loadMealsFromLocalStorage();
+  await loadMealsFromServer();
   initializeMealsForDate(selectedDate.value);
   loadDataFromLocalStorage();
 });
@@ -38,7 +38,6 @@ onBeforeUnmount(() => {
 });
 
 const isFirstVisit = ref(false);
-
 const checkFirstVisit = () => {
   if (!localStorage.getItem("hasVisited")) {
     isFirstVisit.value = true;
@@ -64,7 +63,7 @@ const initializeMealsForDate = (date) => {
       Lunch: [],
       Dinner: [],
     };
-    saveMealsToLocalStorage();
+    saveMealsToServer();
   }
 };
 
@@ -91,11 +90,11 @@ const confirmAddProduct = () => {
     const dateString = selectedDate.value.toISOString().split("T")[0];
     initializeMealsForDate(selectedDate.value);
     meals[dateString][currentMeal.value].push({ ...newProduct });
+    saveMealsToServer();
     showAddProductDialog.value = false;
     newProduct.name = "";
     newProduct.weight = 0;
     newProduct.calories = 0;
-    saveMealsToLocalStorage();
   }
 };
 
@@ -113,7 +112,7 @@ const totalNutrients = computed(() => {
         return {
           proteins: mealTotal.proteins + parseInt((parseInt(item.proteins) / 100) * weight),
           carbs: mealTotal.carbs + parseInt((parseInt(item.carbs) / 100) * weight),
-          fats: mealTotal.fats + parseInt((parseInt(item.fats) / 100) * weight)
+          fats: mealTotal.fats + parseInt((parseInt(item.fats) / 100) * weight),
         };
       }
       return mealTotal;
@@ -129,7 +128,7 @@ const removeProduct = (meal, index) => {
   const dateString = selectedDate.value.toISOString().split("T")[0];
   if (meals[dateString] && meals[dateString][meal]) {
     meals[dateString][meal].splice(index, 1);
-    saveMealsToLocalStorage();
+    saveMealsToServer();
   }
 };
 
@@ -137,14 +136,51 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString("ru-RU", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 };
 
-const saveMealsToLocalStorage = () => {
-  localStorage.setItem("meals", JSON.stringify(meals));
+const loadMealsFromServer = async () => {
+  try {
+    const response = await axios.get(`http://localhost:1337/api/meals?filters[date][$eq]=${currentDateString.value}`);
+    if (response.data && response.data.data.length > 0) {
+      const mealsData = response.data.data[0].attributes.meal;
+      meals[currentDateString.value] = { ...mealsData };
+      console.log("Данные загружены:", meals[currentDateString.value]);
+    } else {
+      initializeMealsForDate(selectedDate.value);
+      console.log("Данных нет, инициализирована пустая структура");
+    }
+  } catch (error) {
+    console.error("Ошибка при загрузке данных с сервера:", error);
+  }
 };
 
-const loadMealsFromLocalStorage = () => {
-  const savedMeals = localStorage.getItem("meals");
-  if (savedMeals) {
-    Object.assign(meals, JSON.parse(savedMeals));
+
+const saveMealsToServer = async () => {
+  try {
+    const dataToSave = {
+      data: {
+        date: currentDateString.value,
+        meal: (meals[currentDateString.value]),
+      },
+    };
+
+    console.log('Data to save:', (dataToSave));
+    const response = await axios.get(
+      `http://localhost:1337/api/meals?filters[date][$eq]=${currentDateString.value}`
+    );
+
+    if (response.data && response.data.data.length > 0) {
+      const mealId = response.data.data[0].id;
+      await axios.put(`http://localhost:1337/api/meals/${mealId}`, dataToSave, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log('Updated meal:', (meals[currentDateString.value]));
+    } else {
+      await axios.post('http://localhost:1337/api/meals', dataToSave, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log('Created new meal:', (meals[currentDateString.value]));
+    }
+  } catch (error) {
+    console.error('Error saving meals to server:', error);
   }
 };
 
@@ -159,7 +195,8 @@ function loadDataFromLocalStorage() {
   }
 }
 
-watch(selectedDate, (newDate) => {
+watch(selectedDate, async (newDate) => {
+  await loadMealsFromServer();
   initializeMealsForDate(newDate);
   saveDataToLocalStorage();
 });
@@ -221,11 +258,11 @@ watch(selectedDate, (newDate) => {
     </v-card-item>
     <Navigation />
     <AddProductDialog
-    v-model:show="showAddProductDialog"
-    :selected-meal="selectedMeal"
-    :items="items"
-    :new-product="newProduct"
-    @confirm="confirmAddProduct"
+      v-model:show="showAddProductDialog"
+      :selected-meal="selectedMeal"
+      :items="items"
+      :new-product="newProduct"
+      @confirm="confirmAddProduct"
     />
   </div>
 </template>
