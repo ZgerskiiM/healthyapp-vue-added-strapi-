@@ -142,7 +142,6 @@ const loadMealsFromServer = async () => {
     if (response.data && response.data.data.length > 0) {
       const mealsData = response.data.data[0].attributes.meal;
       meals[currentDateString.value] = { ...mealsData };
-      console.log("Данные загружены:", meals[currentDateString.value]);
     } else {
       initializeMealsForDate(selectedDate.value);
       console.log("Данных нет, инициализирована пустая структура");
@@ -161,26 +160,21 @@ const saveMealsToServer = async () => {
         meal: (meals[currentDateString.value]),
       },
     };
-
-    console.log('Data to save:', (dataToSave));
     const response = await axios.get(
       `http://localhost:1337/api/meals?filters[date][$eq]=${currentDateString.value}`
     );
-
     if (response.data && response.data.data.length > 0) {
       const mealId = response.data.data[0].id;
       await axios.put(`http://localhost:1337/api/meals/${mealId}`, dataToSave, {
         headers: { 'Content-Type': 'application/json' },
       });
-      console.log('Updated meal:', (meals[currentDateString.value]));
     } else {
       await axios.post('http://localhost:1337/api/meals', dataToSave, {
         headers: { 'Content-Type': 'application/json' },
       });
-      console.log('Created new meal:', (meals[currentDateString.value]));
     }
   } catch (error) {
-    console.error('Error saving meals to server:', error);
+    console.error('Ошибка при сохранении на сервер', error);
   }
 };
 

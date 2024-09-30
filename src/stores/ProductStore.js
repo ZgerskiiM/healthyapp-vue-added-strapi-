@@ -10,7 +10,6 @@ export const useFoodStore = defineStore("food", {
     async loadFood() {
       try {
         const response = await axios.get("http://localhost:1337/api/foods");
-        // Предполагаем, что нам нужен первый элемент массива data
         const foodData = response.data.data[0].attributes.food;
         this.food = foodData;
         console.log('Loaded food:', this.food);
