@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "set_dates",
+  "info": {
+    "singularName": "set-date",
+    "pluralName": "set-dates",
+    "displayName": "setDate"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "date": {
+      "type": "date"
+    }
+  }
+}

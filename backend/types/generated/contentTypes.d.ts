@@ -834,12 +834,43 @@ export interface ApiMealMeal extends Schema.CollectionType {
   };
 }
 
+export interface ApiSetDateSetDate extends Schema.CollectionType {
+  collectionName: 'set_dates';
+  info: {
+    singularName: 'set-date';
+    pluralName: 'set-dates';
+    displayName: 'setDate';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    date: Attribute.Date;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::set-date.set-date',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::set-date.set-date',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiUser1User1 extends Schema.CollectionType {
   collectionName: 'users1';
   info: {
     singularName: 'user1';
     pluralName: 'users1';
     displayName: 'user';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -884,6 +915,7 @@ declare module '@strapi/types' {
       'plugin::i18n.locale': PluginI18NLocale;
       'api::food.food': ApiFoodFood;
       'api::meal.meal': ApiMealMeal;
+      'api::set-date.set-date': ApiSetDateSetDate;
       'api::user1.user1': ApiUser1User1;
     }
   }
